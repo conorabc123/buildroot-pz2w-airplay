@@ -1,3 +1,9 @@
+Retrieved from buildroot/buildroot on 04/23/2025
+
+This Buildroot has been preconfigured to build a 1GB sdcard image for the Raspberry Pi Zero 2 W with docker engine, root CAs, some utilities, as well as wpa_supplicant and udhcpc. Coming soon: initial boot script to configure wpa_supplicant, ipv4, root pw, as well as pull docker image for shairport-sync.
+
+Below is the original README:
+
 Buildroot is a simple, efficient and easy-to-use tool to generate embedded
 Linux systems through cross-compilation.
 
