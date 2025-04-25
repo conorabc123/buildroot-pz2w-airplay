@@ -1,12 +1,9 @@
 #!/bin/sh
 
-echo "Starting WPA Supplicant"
-
-if [[ grep -i "ssid" ]]; then
-exit 0
-else
+echo "Checking if WiFi has been configured"
+# conf_wifi is responsible for checking to see if we have an ssid / psk defined in
+#  /etc/wpa_supplicant.conf, and if not, using dialog to provide a nice tui to set these
 /usr/bin/conf_wifi
-fi
 
-# Fire up wpa_supplicant
+echo "Starting wpa_supplicant"
 wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
