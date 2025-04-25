@@ -3,5 +3,5 @@
 echo "Starting DHCP client..."
 
 udhcpc -i wlan0 -t 3 -T 10 -b -q
-echo "Waiting 10 seconds for network..."
-sleep 10
+echo "Waiting 5 seconds for network..."
+sleep 5
