@@ -1,6 +1,21 @@
-Retrieved from buildroot/buildroot on 04/23/2025
+This buildroot tree is up to date as of 04/23/2025.
 
-This Buildroot has been preconfigured to build a 1GB sdcard image for the Raspberry Pi Zero 2 W with docker engine, root CAs, some utilities, as well as wpa_supplicant and dhcpcd. Coming soon: initial boot script to configure wpa_supplicant, ipv4, root pw, as well as pull docker image for shairport-sync.
+This is a buildroot set up for the Raspberry Pi Zero 2 W. The image accomplishes the following:
+
+Over a serial console (115200 baud. Looking for someone to test HDMI console), the Pi boots and prompts for a WiFi SSID/Passphrase.
+
+It grabs a DHCP lease, sets up NTP to sync the clock, and then gets Docker ready.
+
+Once Docker is ready, it pulls mikebrady/shairport-sync:latest and starts it using /dev/snd for output.
+
+This allows a plug and play solution to turn your PZ2W into an airplay receiver. 
+
+TODO:
+Randomly generate root password and show on first boot (Or prompt user to set)
+utilize wpa passphrase to stop storing PSK in plain text in wpa_supplicant.conf
+allow user to set manual network configuration
+after initial configuration, set rootfs to read only, and provide cli tool to change this for maintenance.
+
 
 Below is the original README:
 
