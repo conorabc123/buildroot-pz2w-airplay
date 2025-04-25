@@ -4,6 +4,10 @@
 
 This project sets up a lightweight, headless AirPlay receiver using a Raspberry Pi Zero 2 W and Buildroot.
 
+I've tested this and have had success, but this is definitely just a 'for-personal-use-but-ill-throw-it-on-github-for-fun' sort of deal. 
+
+It's hacky in parts, and if you look past the horrifying security practices of using toor as the default root password, storing the wifi PSK in plaintext, among other things, then its not so bad :)
+
 ---
 
 ## Features
