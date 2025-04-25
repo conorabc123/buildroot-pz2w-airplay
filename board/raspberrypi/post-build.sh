@@ -14,3 +14,4 @@ elif [ -d ${TARGET_DIR}/etc/systemd ]; then
     ln -sf /lib/systemd/system/getty@.service \
        "${TARGET_DIR}/etc/systemd/system/getty.target.wants/getty@tty1.service"
 fi
+rm -f "${TARGET_DIR}/etc/init.d/S41dhcpcd"

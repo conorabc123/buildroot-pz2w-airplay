@@ -1,2 +1,4 @@
 #!/bin/sh
+
+echo "pulling / starting mikebrady/shairport-sync:latest..."
 docker run -d --restart unless-stopped --net host --device /dev/snd --name shairport-sync  mikebrady/shairport-sync:latest

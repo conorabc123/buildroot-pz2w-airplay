@@ -1,0 +1,12 @@
+#!/bin/sh
+
+echo "Starting WPA Supplicant"
+
+if [[ grep -i "ssid" ]]; then
+exit 0
+else
+/usr/bin/conf_wifi
+fi
+
+# Fire up wpa_supplicant
+wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf

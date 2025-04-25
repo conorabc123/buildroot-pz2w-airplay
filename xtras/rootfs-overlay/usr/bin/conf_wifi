@@ -12,13 +12,23 @@ if ! grep -q 'ssid=' "$CONF_FILE" || ! grep -q 'psk=' "$CONF_FILE"; then
   SSID_TMP="/tmp/ssid.$$"
   PSK_TMP="/tmp/psk.$$"
 
-  dialog --clear --title "Wi-Fi SSID" \
+
+OLD_LEVEL=$(cat /proc/sys/kernel/printk)
+echo 1 > /proc/sys/kernel/printk
+
+
+  dialog --no-lines --clear --title "Wi-Fi SSID" \
     --inputbox "Enter your Wi-Fi SSID:" 10 40 2> "$SSID_TMP"
   [ $? -ne 0 ] && echo "Cancelled." && exit 1
 
-  dialog --clear --title "Wi-Fi Password" \
+  dialog --no-lines --clear --title "Wi-Fi Password" \
     --inputbox "Enter Wi-Fi password:" 10 40 2> "$PSK_TMP"
   [ $? -ne 0 ] && echo "Cancelled." && exit 1
+
+
+echo "$OLD_LEVEL" > /proc/sys/kernel/printk
+
+
 
   SSID="$(cat "$SSID_TMP")"
   PSK="$(cat "$PSK_TMP")"
@@ -44,3 +54,4 @@ if ! grep -q 'ssid=' "$CONF_FILE" || ! grep -q 'psk=' "$CONF_FILE"; then
 else
   echo "$CONF_FILE already contains an SSID and PSK. Skipping initial WiFi config..."
 fi
+

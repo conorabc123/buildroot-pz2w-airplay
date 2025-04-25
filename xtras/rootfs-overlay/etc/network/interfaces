@@ -1,0 +1,7 @@
+# Custom /etc/network/interfaces for buildroot-pz2w-airplay
+
+auto lo
+iface lo inet loopback
+
+auto wlan0
+iface wlan0 inet manual
