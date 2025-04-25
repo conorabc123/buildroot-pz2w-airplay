@@ -45,6 +45,40 @@ This provides a **plug-and-play** solution to turn your **Pi Zero 2 W** into an 
 
 ---
 
+# 🐦 Warrant Canary
+
+This is a public notice.
+
+As of the signed date below, I, the humble maintainer of this Buildroot configuration that turns a $15 single-board computer into an AirPlay speaker, have:
+
+- Not been served with any National Security Letters (NSLs), FISA court orders, secret subpoenas, or covert requests for data interception.
+- Not been approached, bribed, intimidated, coerced, threatened, or otherwise contacted by any alphabet agency (FBI, NSA, CIA, DHS, USPS, PTA, HOA) to insert backdoors, surveillance code, or vulnerabilities into this project.
+- Not been asked to collect or hand over user data — primarily because **this project does not collect any data whatsoever**.
+- Remained gloriously unnoticed and unimportant in the grand cyber-panopticon that is modern society.
+
+If this statement ever disappears, changes substantially, or is not updated every so often (say, every few months), you should assume the worst: that I have been abducted by Men in Black, replaced by a deepfake, or imprisoned in a facility where only AM radio signals can penetrate.
+
+Stay vigilant, comrades.
+
+**Last Updated:** 04/23/2025
+
+**PGP Fingerprint:** `DEAD BEEF CAFE F00D FEED FACE 1234 5678 9ABC DEF0`
+
+---
+## 📜 PGP Signature
+
+```
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE3q1u/AX3rRMRccGPoV5C9EdfgFAFAmZmQAoACgkQoV5C9Edf
+gFAUKBAAv+khGofRgS9rhvZqPOkHkQ5d5hU3ke05K1n/l0jJwS9d9xXn8r0HXI2D
+5u1zJv2+k32K2i9sAtN1Ndf7K1VWyRjPZ/NcK50xHhfZjPYcVyS2q8RH7XMG64Al
+hGnZ1Ghsm8n4g6X5rf52QbhWABaX80Beb3+E7we6SpN4vlpyV9DiFaM9Za7zKZSk
+zQ==
+=abcd
+-----END PGP SIGNATURE-----
+```
+
 
 Below is the original README:
 
