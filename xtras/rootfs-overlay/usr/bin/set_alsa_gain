@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Loop over all sound cards
+for card in $(awk '/^[ 0-9]/ { print $1 }' /proc/asound/cards); do
+  echo "Processing card $card..."
+
+  # List all mixer controls for the card
+  amixer -c "$card" scontrols | sed -n "s/^Simple mixer control '\(.*\)',.*$/\1/p" | while read -r control; do
+    echo "  Setting '$control' on card $card to 0.0 dB..."
+    # Try to set to 0dB, but continue even if it fails
+    amixer -c "$card" sset "$control" 0dB >/dev/null 2>&1 || echo "    (failed to set '$control')"
+  done
+done
