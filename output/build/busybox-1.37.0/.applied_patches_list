@@ -1,0 +1,11 @@
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0001-networking-libiproute-use-linux-if_packet.h-instead-.patch
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0002-Makefile.flags-strip-non-l-arguments-returned-by-pkg.patch
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0003-libbb-sockaddr2str-ensure-only-printable-characters-.patch
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0004-nslookup-sanitize-all-printed-strings-with-printable.patch
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0005-seedrng-fix-getrandom-detection-for-non-glibc-libc.patch
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0006-menuconfig-GCC-failing-saying-ncurses-is-not-found.patch
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0007-tc-Fix-compilation-with-Linux-v6.8-rc1.patch
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0008-awk.c-fix-CVE-2023-42366-bug-15874.patch
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0009-hwclock-Check-for-SYS_settimeofday-before-calling-sy.patch
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0010-libbb-sha-add-missing-sha-NI-guard.patch
+/home/conor/git/mine-git/build-testing/buildroot-pz2w-airplay/package/busybox/0011-syslogd-fix-wrong-OPT_locallog-flag-detection.patch
