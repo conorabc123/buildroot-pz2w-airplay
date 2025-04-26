@@ -1,7 +1,19 @@
 #!/bin/sh
 
-echo "Starting DHCP client..."
-
-udhcpc -i wlan0 -t 3 -T 10 -b -q
-echo "Waiting 5 seconds for network..."
-sleep 5
+case "$1" in
+  start)
+    echo "Starting udhcpc"
+    udhcpc -i wlan0 -t 3 -T 10 -b -q
+    ;;
+  stop)
+    echo "Stopping udhcpc"
+    killall -9 udhcpc
+    ;;
+  restart|reload)
+    "$0" stop
+    "$0" start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac

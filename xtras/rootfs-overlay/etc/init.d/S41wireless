@@ -1,9 +1,21 @@
 #!/bin/sh
 
-echo "Checking if WiFi has been configured"
-# conf_wifi is responsible for checking to see if we have an ssid / psk defined in
-#  /etc/wpa_supplicant.conf, and if not, using dialog to provide a nice tui to set these
-/usr/bin/conf_wifi
+case "$1" in
+  start)
+    echo "Starting wpa_supplicant"
+    wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
+    ;;
+  stop)
+    echo "Stopping wpa_supplicant"
+    killall wpa_supplicant
+    ;;
+  restart|reload)
+    "$0" stop
+    "$0" start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
 
-echo "Starting wpa_supplicant"
-wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
+exit $?
