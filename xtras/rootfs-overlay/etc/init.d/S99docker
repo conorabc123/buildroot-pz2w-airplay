@@ -1,8 +1,0 @@
-#!/bin/sh
-
-echo "pulling / starting mikebrady/shairport-sync:latest..."
-
-# one last hurrah, just in case. cotex-a53 is known for many things. speed isn't one of them. except for it is?
-sleep 3
-
-docker run -d --restart unless-stopped --net host --device /dev/snd --name shairport-sync  mikebrady/shairport-sync:latest
