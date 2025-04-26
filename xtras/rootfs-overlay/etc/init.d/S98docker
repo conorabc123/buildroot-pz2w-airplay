@@ -1,0 +1,47 @@
+#!/bin/sh
+
+case "$1" in
+  start)
+    echo "Waiting for Docker daemon to be ready..."
+
+    # Wait for the Docker daemon to be available
+    timeout=30
+    while ! docker info >/dev/null 2>&1; do
+      sleep 1
+      timeout=$((timeout - 1))
+      if [ "$timeout" -le 0 ]; then
+        echo "ERROR: Docker daemon did not become ready in time."
+        exit 1
+      fi
+    done
+
+    echo "Docker daemon is ready."
+
+    echo "Checking for shairport-sync container..."
+
+    if docker ps -a --format '{{.Names}}' | grep -qw shairport-sync; then
+      echo "Container already exists. Starting if needed..."
+      docker start shairport-sync || true
+    else
+      echo "Container does not exist. Running new container..."
+      docker run -d --restart unless-stopped --net host --device /dev/snd --name shairport-sync mikebrady/shairport-sync:latest
+    fi
+    ;;
+  stop)
+    echo "Stopping shairport-sync container..."
+    docker stop shairport-sync || true
+    ;;
+  restart|reload)
+    "$0" stop
+    "$0" start
+    ;;
+  update)
+    echo "Pulling latest shairport-sync image..."
+    docker pull mikebrady/shairport-sync:latest
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|update}"
+    exit 1
+esac
+
+exit 0
