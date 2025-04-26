@@ -1,0 +1,157 @@
+#!/bin/sh
+
+FIRST_BOOT_FLAG="/etc/first_boot"
+
+# Check if first boot file exists
+if [ ! -f "$FIRST_BOOT_FLAG" ]; then
+  echo "Skipping first boot setup: $FIRST_BOOT_FLAG not found."
+  exit 0
+fi
+
+# Save old printk level and quiet kernel output
+OLD_LEVEL=$(cat /proc/sys/kernel/printk)
+echo 1 > /proc/sys/kernel/printk
+
+cleanup() {
+  echo "$OLD_LEVEL" > /proc/sys/kernel/printk
+  rm -f /tmp/pass1.$$ /tmp/pass2.$$ /tmp/ssid.$$ /tmp/psk.$$ /tmp/set_hostname.$$ /tmp/newuser.$$ /tmp/newuserpass1.$$ /tmp/newuserpass2.$$
+}
+trap cleanup EXIT
+
+# --- 1. Update Root Password ---
+while true; do
+  dialog --no-lines --clear --insecure --passwordbox "Enter NEW root password:" 10 50 2> /tmp/pass1.$$
+  [ $? -ne 0 ] && echo "Cancelled." && exit 1
+
+  dialog --no-lines --clear --insecure --passwordbox "Re-enter NEW root password:" 10 50 2> /tmp/pass2.$$
+  [ $? -ne 0 ] && echo "Cancelled." && exit 1
+
+  PASS1="$(cat /tmp/pass1.$$)"
+  PASS2="$(cat /tmp/pass2.$$)"
+
+  if [ "$PASS1" != "$PASS2" ]; then
+    dialog --no-lines --clear --msgbox "Passwords do not match. Please try again." 7 40
+    continue
+  fi
+
+  if [ -z "$PASS1" ]; then
+    dialog --no-lines --clear --msgbox "Empty root password entered. It's not recommended but will be accepted." 7 40
+  fi
+
+  echo "root:$PASS1" | chpasswd
+  dialog --no-lines --clear --msgbox "Root password updated successfully." 7 40
+  break
+done
+
+# --- 2. Set Hostname ---
+dialog --no-lines --clear --inputbox "Enter hostname (visible in AirPlay receiver list):" 10 50 2> /tmp/set_hostname.$$
+INPUT_HOSTNAME="$(cat /tmp/set_hostname.$$)"
+
+NEW_HOSTNAME=$(printf '%s' "$INPUT_HOSTNAME" | tr -cd 'a-zA-Z0-9.-')
+hostname "$NEW_HOSTNAME" || { echo "Failed to set hostname"; exit 1; }
+echo "$NEW_HOSTNAME" > /etc/hostname
+
+# Update /etc/hosts (assumes replacing old hostname like 'buildroot-pz2w-airplay')
+sed -i "s/buildroot-pz2w-airplay/$NEW_HOSTNAME/g" /etc/hosts
+
+dialog --no-lines --clear --msgbox "Hostname updated to '$NEW_HOSTNAME'." 7 40
+
+# --- 3. Configure Wi-Fi ---
+CONF_FILE="/etc/wpa_supplicant.conf"
+
+if ! grep -q 'ssid=' "$CONF_FILE" || ! grep -q 'psk=' "$CONF_FILE"; then
+  dialog --no-lines --clear --inputbox "Enter Wi-Fi SSID:" 10 40 2> /tmp/ssid.$$
+  [ $? -ne 0 ] && echo "Cancelled." && exit 1
+
+  while true; do
+    dialog --no-lines --clear --insecure --passwordbox "Enter Wi-Fi Password (min 8 characters):" 10 40 2> /tmp/psk.$$
+    [ $? -ne 0 ] && echo "Cancelled." && exit 1
+
+    if [ "$(wc -c < /tmp/psk.$$)" -le 8 ]; then
+      dialog --no-lines --clear --msgbox "Password must be longer than 8 characters." 7 40
+    else
+      break
+    fi
+  done
+
+  SSID="$(cat /tmp/ssid.$$)"
+  PSK="$(cat /tmp/psk.$$)"
+
+  if [ -z "$SSID" ] || [ -z "$PSK" ]; then
+    echo "SSID or Password empty. Aborting Wi-Fi config."
+    exit 1
+  fi
+
+  {
+    echo "#ctrl_interface=/var/run/wpa_supplicant"
+    echo "ap_scan=1"
+    echo ""
+    wpa_passphrase "$SSID" "$PSK" | grep -v '^#psk='
+  } > "$CONF_FILE"
+
+  dialog --no-lines --clear --msgbox "Wi-Fi configuration saved." 7 40
+else
+  echo "Wi-Fi already configured, skipping."
+fi
+
+# --- 4. Create Non-root User ---
+dialog --no-lines --clear --inputbox "Enter NEW username to create:" 10 40 2> /tmp/newuser.$$
+NEWUSER="$(cat /tmp/newuser.$$)"
+
+# Basic validation
+case "$NEWUSER" in
+  *[!a-zA-Z0-9]*)
+    dialog --no-lines --clear --msgbox "Invalid username. Letters and numbers only." 7 40
+    exit 1
+    ;;
+esac
+
+# Add user if not exists
+if ! id "$NEWUSER" >/dev/null 2>&1; then
+  adduser -D "$NEWUSER" # -D for no password yet
+  addgroup wheel 2>/dev/null # Ensure wheel group exists
+  adduser "$NEWUSER" wheel
+else
+  dialog --no-lines --clear --msgbox "User already exists, skipping creation." 7 40
+fi
+
+# Set password for new user
+while true; do
+  dialog --no-lines --clear --insecure --passwordbox "Enter password for $NEWUSER:" 10 50 2> /tmp/newuserpass1.$$
+  [ $? -ne 0 ] && echo "Cancelled." && exit 1
+
+  dialog --no-lines --clear --insecure --passwordbox "Re-enter password for $NEWUSER:" 10 50 2> /tmp/newuserpass2.$$
+  [ $? -ne 0 ] && echo "Cancelled." && exit 1
+
+  PASS1="$(cat /tmp/newuserpass1.$$)"
+  PASS2="$(cat /tmp/newuserpass2.$$)"
+
+  if [ "$PASS1" != "$PASS2" ]; then
+    dialog --no-lines --clear --msgbox "Passwords do not match. Try again." 7 40
+    continue
+  fi
+
+  echo "$NEWUSER:$PASS1" | chpasswd
+  dialog --no-lines --clear --msgbox "User '$NEWUSER' created and password set." 7 40
+  break
+done
+
+# --- Final cleanup ---
+rm -f "$FIRST_BOOT_FLAG"
+dialog --no-lines --clear --msgbox "First boot setup complete. We will now grab an IP and pull the shairport-sync docker image" 10 45
+
+# setup some environment variables
+cat <<EOF >> /etc/environment
+LC_CTYPE="en_US.UTF-8"
+LANG="en_US.UTF-8"
+LC_ALL="en_US.UTF-8"
+TZ="America/Los_Angeles"
+EDITOR="/usr/bin/nano"
+EOF
+
+# setup some profile stuff
+cat <<EOF >> /etc/profile
+PS1='|\u@\h| {\w}\$ '
+EOF
+
+exit 0
