@@ -38,7 +38,8 @@ while true; do
     dialog --no-lines --clear --msgbox "Empty root password entered. It's not recommended but will be accepted." 7 40
   fi
 
-  echo "root:$PASS1" | chpasswd
+  HASH=$(mkpasswd "$PASS1")
+  sed -i "s|^root:[^:]*:|root:${HASH}:|" /etc/shadow
   dialog --no-lines --clear --msgbox "Root password updated successfully." 7 40
   break
 done
@@ -108,6 +109,8 @@ esac
 
 # Add user if not exists
 if ! id "$NEWUSER" >/dev/null 2>&1; then
+  mkdir /home
+  mkdir /home/$NEWUSER
   adduser -D "$NEWUSER" # -D for no password yet
   addgroup wheel 2>/dev/null # Ensure wheel group exists
   adduser "$NEWUSER" wheel
@@ -131,7 +134,8 @@ while true; do
     continue
   fi
 
-  echo "$NEWUSER:$PASS1" | chpasswd
+  HASH=$(mkpasswd "$PASS1")
+  sed -i "s|^${NEWUSER}:[^:]*:|${NEWUSER}:${HASH}:|" /etc/shadow
   dialog --no-lines --clear --msgbox "User '$NEWUSER' created and password set." 7 40
   break
 done
@@ -151,7 +155,7 @@ EOF
 
 # setup some profile stuff
 cat <<EOF >> /etc/profile
-PS1='|\u@\h| {\w}\$ '
+PS1='|\u@\h| {\w}\: '
 EOF
 
 exit 0
