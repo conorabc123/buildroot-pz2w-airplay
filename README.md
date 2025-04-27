@@ -6,7 +6,30 @@ This project sets up a lightweight, headless AirPlay receiver using a Raspberry 
 
 I've tested this and have had success, but this is definitely just a 'for-personal-use-but-ill-throw-it-on-github-for-fun' sort of deal. 
 
-It's hacky in parts, and if you look past the horrifying security practices of using toor as the default root password, storing the wifi PSK in plaintext, among other things, then its not so bad :)
+
+---
+
+## Installation
+
+Download the latest release, and unpack. You'll find an img file which needs to be written to an SD card. I like to use `dd`
+
+`# dd if=buildroot-pz2w-airplay.img if=/dev/sd? bs=1M oflag=direct status=progress`
+
+Once written, hook up your favorite USB serial adapter to your computer and Pi Zero 2 W, set it to 115200 baud, insert the SD card, and power on the Pi.
+
+_You also may be able to connect an HDMI display and USB mouse / keyboard, but I have not tested this_
+
+You will see boot messages, and eventually, be whisked away into the first run config script, which will prompt you for some information:
+
+- Root password
+- Hostname (Will also be visible in airplay receiver list)
+- Wifi SSID / PSK
+- a user name / password for non root (ssh) access
+
+
+It will then try to get an IP address via DHCP, and if successfull, pull the latest shairport-sync docker and start it. It will also set the gain on all compatible ALSA devices to 0.0db, which *usually* corresponds to 100% volume. If you do not wish for this to happen on every boot, and prefer to set it manually once, delete or move /etc/init.d/S99set_volume.
+
+Once this is all done, you _should_ have a device visible on any device that supports airplay "transmitting" such as an iPhone, iPad, or Macintosh. Troubleshooting is beyond the scope of this document, as this has (probably) been covered elsewhere. Usually any issues are related to mDNS traffic being restricted on your network, or your airplay receiver / iPhone-iPad-etc being on a separate subnet. If this is the case you may need to look into setting up an mDNS repeater, but that is also beyond our scope here :)
 
 ---
 
@@ -36,8 +59,8 @@ This provides a **plug-and-play** solution to turn your **Pi Zero 2 W** into an 
 
 ## TODO
 
-- [ ] Randomly generate root password and display on first boot (or prompt user to set manually).
-- [ ] Utilize `wpa_passphrase` to avoid storing plain-text PSK in `wpa_supplicant.conf`.
+- [ ] ~~Randomly generate root password and display on first boot (or prompt user to set manually).~~ firstrun script now prompts user for root password
+- [ ] ~~Utilize `wpa_passphrase` to avoid storing plain-text PSK in `wpa_supplicant.conf`.~~ Done.
 - [ ] Add option for manual network configuration.
 - [ ] After initial configuration:
   - Remount root filesystem as **read-only**.
