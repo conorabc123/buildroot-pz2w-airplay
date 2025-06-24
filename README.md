@@ -2,10 +2,7 @@
 
 > **Buildroot Tree Updated:** 04/23/2025
 
-This project sets up a lightweight, headless AirPlay receiver using a Raspberry Pi Zero 2 W and Buildroot.
-
-I've tested this and have had success, but this is definitely just a 'for-personal-use-but-ill-throw-it-on-github-for-fun' sort of deal. 
-
+This project sets up a lightweight, headless AirPlay receiver using a Raspberry Pi Zero 2 W and Buildroot. Tested on armhf, aarch64, pi4, licheepi-nano (requires manual network config), AMD64.
 
 ---
 
